@@ -1,0 +1,8 @@
+{
+    "max_file_size_mb": {
+        "description": "PDF文件大小上限(MB)，超过此大小将拒绝发送",
+        "type": "int",
+        "default": 80,
+        "hint": "QQ群文件限制通常为100MB，建议设为80MB以下以确保兼容性"
+    }
+}

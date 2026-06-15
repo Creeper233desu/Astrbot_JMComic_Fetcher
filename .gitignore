@@ -1,0 +1,6 @@
+__pycache__/
+*.pyc
+.astrbot_stubs/
+pyrightconfig.json
+.DS_Store
+Thumbs.db
