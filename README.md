@@ -47,6 +47,6 @@ QQ命令 → 解析JM ID → 下载图片 → img2pdf转PDF → 发送文件到Q
 
 MIT
 
-##致谢
+## 致谢
 本项目基于/引用了以下开源项目：
 -[JMComic-Crawler-Python](https://github.com/hect0x7/JMComic-Crawler-Python/blob/master/assets/docs/sources/option_file_syntax.md)
