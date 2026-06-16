@@ -25,6 +25,7 @@ from astrbot.api.star import Context, Star, StarTools
 from astrbot.api.message_components import Plain, File
 from astrbot.api import logger
 from astrbot.api.event.filter import PermissionType
+from astrbot.core import astrbot_config, file_token_service
 
 
 class JmcomicPlugin(Star):
@@ -81,6 +82,15 @@ class JmcomicPlugin(Star):
         # 发送开始下载的提示
         yield event.plain_result(f"正在获取漫画信息...\n ID: {jm_id}\n下载和PDF转换中，请稍候...")
 
+        # ---- 诊断：打印 callback_api_base 的当前值 ----
+        cb = astrbot_config.get("callback_api_base", "未设置")
+        logger.info(f"[JMComic] callback_api_base = {cb}")
+        if not cb or cb == "未设置":
+            logger.warning(
+                "[JMComic] callback_api_base 未配置！PDF文件将无法通过HTTP发送。"
+                "请在 AstrBot Web面板 → 配置 中设置 callback_api_base = http://astrbot:6199，然后重启AstrBot。"
+            )
+
         # 为本次下载创建独立的工作目录（避免并发冲突）
         session_id = uuid.uuid4().hex[:12]
         work_dir = self.cache_root / session_id
@@ -128,11 +138,40 @@ class JmcomicPlugin(Star):
             )
 
             # 发送PDF文件
-            yield event.chain_result([
-                File(name=Path(pdf_path).name, file=str(pdf_path)),
-            ])
+            # 1. 先注册到文件服务获取 HTTP URL（Docker环境必须走HTTP）
+            callback_host = str(astrbot_config.get("callback_api_base", "")).rstrip("/")
+            if not callback_host:
+                yield event.plain_result("⚠️ callback_api_base 未设置，无法发送文件。请在AstrBot Web面板配置后重启。")
+                return
 
-            logger.info(f"JMComic下载成功: {jm_id} -> {album_name} ({file_size_mb:.1f}MB)")
+            token = await file_token_service.register_file(pdf_path)
+            file_url = f"{callback_host}/api/file/{token}"
+            logger.info(f"[JMComic] 文件已注册: {file_url}")
+
+            # 2. 尝试 OneBot 原生 upload_file API
+            bot = getattr(event, "bot", None)
+            if bot is not None:
+                try:
+                    gid = event.get_group_id()
+                    if gid:
+                        await bot.call_action("upload_group_file", group_id=int(gid), file=file_url, name=Path(pdf_path).name)
+                    else:
+                        await bot.call_action("upload_private_file", user_id=int(event.get_sender_id()), file=file_url, name=Path(pdf_path).name)
+                    logger.info(f"[JMComic] upload_file API 发送成功")
+                    send_ok = True
+                except Exception as e:
+                    logger.warning(f"[JMComic] upload_file API 失败({e})，回落 File 消息组件")
+                    send_ok = False
+            else:
+                send_ok = False
+
+            # 3. 回落方案: File 消息组件
+            if not send_ok:
+                yield event.chain_result([
+                    File(name=Path(pdf_path).name, url=file_url),
+                ])
+
+            logger.info(f"JMComic下载并发送完成: {jm_id} -> {album_name} ({file_size_mb:.1f}MB)")
 
         except Exception as e:
             error_msg = str(e)
