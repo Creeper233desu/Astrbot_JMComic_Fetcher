@@ -1,56 +1,60 @@
-# JMComic PDF下载 · AstrBot插件
+# JMComic PDF下载 · AstrBot 插件
 
-通过QQ命令搜索、下载JM漫画，自动导出为PDF并发送到当前会话。
+AstrBot 插件，通过 QQ 命令搜索、查询、下载 JM 漫画，自动导出 PDF 并发送到当前会话。
 
-## 命令
+## 功能一览
 
 ### 搜索
-
 | 命令 | 说明 |
 |------|------|
-| `/jmsearch <关键词>` | 搜索漫画（默认最新排序），每页5个结果 |
-| `/jmsearch <关键词> -s <排序>` | 指定排序方式搜索 |
-| `/jmsearch next` | 下一页 |
-| `/jmsearch prev` | 上一页 |
-| `/jmsearch d <1-5>` | 下载当前页对应序号的漫画 |
-
-排序选项：`latest`（最新）、`views`（最多观看）、`pics`（最多图片）、`likes`（最多喜欢）
+| `/jms <关键词>` | 搜索漫画，每页 5 个结果 |
+| `/jms <关键词> -s <排序>` | 指定排序：`latest`/`views`/`pics`/`likes` |
+| `/jms next` / `prev` | 翻页 |
+| `/jms d <1-5>` | 下载当前页第 N 个结果 |
+| `/jms info <1-5>` | 查看当前页第 N 个结果详情+封面 |
 
 ### 下载
-
 | 命令 | 说明 |
 |------|------|
-| `/jm <ID>` | 下载漫画PDF |
-| `/jmcomic <ID>` | 同上（完整命令） |
+| `/jm <ID>` | 下载漫画 PDF |
+| `/jmcomic <ID>` | 同上 |
 
-ID支持：纯数字 `422866`、`JM422866`、JM链接
+ID 支持：`422866` / `JM422866` / JM 完整链接
 
-### 管理
-
+### 查询与管理
 | 命令 | 说明 |
 |------|------|
-| `/jmstatus` | 查看缓存状态 |
+| `/jminfo <ID>` | 查看漫画详情+封面 |
+| `/jmstatus` | 缓存状态 |
 | `/jmclean` | 清理缓存（仅管理员） |
+| `/jmhelp` | 帮助信息 |
 
 ## 配置
 
-在 AstrBot Web 管理面板可调整：
+AstrBot Web 管理面板可调：
 
 | 配置项 | 默认值 | 说明 |
 |--------|--------|------|
-| `max_file_size_mb` | 80 | PDF大小上限(MB) |
+| `max_pages` | 100 | 漫画页数上限，超过拒绝下载 |
+| `max_file_size_mb` | 80 | PDF 文件大小上限 (MB) |
+| `download_timeout` | 300 | 下载超时秒数 |
+| `send_cover` | true | 查询时是否发送封面图 |
+| `tag_limit` | 6 | 显示标签数上限 |
+| `author_limit` | 3 | 显示作者数上限 |
+| `sensitive_words` | (空) | 敏感词过滤，逗号分隔 |
+| `auto_clean_file_amount` | 20 | 缓存会话数上限 |
+
+## Docker 部署
+
+在 AstrBot Web 面板设置：
+```
+callback_api_base: http://astrbot:6185
+```
 
 ## 依赖
 
 ```bash
 pip install jmcomic img2pdf pikepdf
-```
-
-## Docker 部署
-
-确保在 AstrBot Web 面板配置 `callback_api_base`：
-```
-http://astrbot:6185
 ```
 
 ## 许可证

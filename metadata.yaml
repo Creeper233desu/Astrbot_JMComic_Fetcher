@@ -3,7 +3,7 @@ display_name: JMComic PDF下载
 desc: 从JMComic下载漫画并导出为PDF文件发送到QQ，支持/jmcomic和/jm命令
 version: v1.1.0
 author: Creeper233
-repo: ""
+repo: "https://github.com/Creeper233/astrbot_plugin_jmcomic"
 tags:
   - "JMComic"
   - "PDF下载"
