@@ -833,8 +833,11 @@ client:
         client = option.new_jm_client()
         album = client.get_album_detail(jm_id)
 
-        tags = ", ".join(album.tags[:6]) if album.tags else "无"
-        authors = ", ".join(album.authors) if album.authors else "未知"
+        tag_limit = self.config.get("tag_limit", 6)
+        tag_limit = self.config.get("tag_limit", 6)
+        tags = ", ".join(album.tags[:tag_limit] if tag_limit > 0 else []) if album.tags else "无"
+        author_limit = self.config.get("author_limit", 3)
+        authors = ", ".join(album.authors[:author_limit] if author_limit > 0 else []) if album.authors else "未知"
         photos = len(album)
 
         # 敏感词过滤

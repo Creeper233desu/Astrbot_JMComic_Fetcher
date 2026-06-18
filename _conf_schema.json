@@ -17,6 +17,18 @@
         "default": "",
         "hint": "例如: 词1,词2,词3。留空则不启用过滤"
     },
+    "author_limit": {
+        "description": "查询信息时显示的最大作者数",
+        "type": "int",
+        "default": 3,
+        "hint": "设为0则不显示作者"
+    },
+    "tag_limit": {
+        "description": "查询信息时显示的最大标签数",
+        "type": "int",
+        "default": 6,
+        "hint": "设为0则不显示标签"
+    },
     "send_cover": {
         "description": "查询本子信息时是否发送封面图片",
         "type": "bool",
