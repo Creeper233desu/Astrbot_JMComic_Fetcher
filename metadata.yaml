@@ -1,7 +1,7 @@
 name: astrbot_plugin_jmcomic
 display_name: JMComic PDF下载
 desc: 从JMComic下载漫画并导出为PDF文件发送到QQ，支持/jmcomic和/jm命令
-version: v1.0.0
+version: v1.1.0
 author: Creeper233
 repo: ""
 tags:

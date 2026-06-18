@@ -4,5 +4,35 @@
         "type": "int",
         "default": 80,
         "hint": "QQ群文件限制通常为100MB，建议设为80MB以下以确保兼容性"
+    },
+    "download_timeout": {
+        "description": "下载超时时间(秒)，超过此时间将终止下载",
+        "type": "int",
+        "default": 300,
+        "hint": "防止下载卡死，建议设为180-600之间（3-10分钟）"
+    },
+    "sensitive_words": {
+        "description": "敏感词列表，查询信息时自动过滤（逗号分隔）",
+        "type": "string",
+        "default": "",
+        "hint": "例如: 词1,词2,词3。留空则不启用过滤"
+    },
+    "send_cover": {
+        "description": "查询本子信息时是否发送封面图片",
+        "type": "bool",
+        "default": true,
+        "hint": "关闭后只发文字信息，防止被举办"
+    },
+    "max_pages": {
+        "description": "本子页数上限，超过此页数将拒绝下载",
+        "type": "int",
+        "default": 100,
+        "hint": "防止下载过大本子导致服务器卡死，建议设为100-200之间"
+    },
+    "auto_clean_file_amount": {
+        "description": "自动清理文件数量，超过此数量将删除最旧的文件",
+        "type": "int",
+        "default": 20,
+        "hint": "为了节省存储空间，建议设为20-50之间"
     }
 }
