@@ -5,11 +5,37 @@
         "default": 80,
         "hint": "QQ群文件限制通常为100MB，建议设为80MB以下以确保兼容性"
     },
+    "download_threads": {
+        "description": "图片下载并发线程数（调低可减少内存占用）",
+        "type": "int",
+        "default": 8,
+        "hint": "默认8，内存不足时建议降低"
+    },
     "download_timeout": {
         "description": "下载超时时间(秒)，超过此时间将终止下载",
         "type": "int",
         "default": 300,
         "hint": "防止下载卡死，建议设为180-600之间（3-10分钟）"
+    },
+    "send_mode": {
+        "description": "文件发送方式",
+        "type": "string",
+        "default": "auto",
+        "options": ["auto", "local", "http"],
+        "hint": "auto=自动选择 / local=本地路径(Win) / http=HTTP_URL(Docker)"
+    },
+    "access_mode": {
+        "description": "访问控制模式",
+        "type": "string",
+        "default": "none",
+        "options": ["none", "whitelist", "blacklist"],
+        "hint": "none=无限制 / whitelist=白名单 / blacklist=黑名单"
+    },
+    "access_list": {
+        "description": "访问控制列表，逗号分隔的会话ID或群号/QQ号",
+        "type": "string",
+        "default": "",
+        "hint": "例如: 123456,789012。支持群号、QQ号或完整会话ID(aiocqhttp:GroupMessage:xxx)"
     },
     "sensitive_words": {
         "description": "敏感词列表，查询信息时自动过滤（逗号分隔）",
@@ -28,6 +54,12 @@
         "type": "int",
         "default": 6,
         "hint": "设为0则不显示标签"
+    },
+    "enable_stats": {
+        "description": "是否启用下载统计（记录tag/author出现次数）",
+        "type": "bool",
+        "default": true,
+        "hint": "关闭后不记录统计数据，/jmstat将无数据"
     },
     "send_cover": {
         "description": "查询本子信息时是否发送封面图片",
