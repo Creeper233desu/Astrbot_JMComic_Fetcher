@@ -274,19 +274,21 @@ class JmcomicPlugin(Star):
         # 发送开始下载的提示
         yield event.plain_result(f"正在获取本子信息...\n ID: {jm_id}")
 
-        # ---- 缓存命中：已有同一ID的PDF直接发送 ----
-        cached = self._find_cached_pdf(jm_id)
-        if cached:
-            file_size_mb = os.path.getsize(cached) / (1024 * 1024)
-            yield event.plain_result(f"📦 缓存命中！直接发送...\n📦 {file_size_mb:.1f}MB")
-            async for _ in self._send_file(event, cached):
-                yield _
-            yield event.plain_result(
-                f"✅ 发送完成！\n"
-                f" ID: {jm_id}\n"
-                f"📦 {file_size_mb:.1f}MB（来自缓存）"
-            )
-            return
+        # ---- 缓存命中：已有同一ID的PDF直接发送(先读取缓存设置) ----
+        if self.config.get("cache_hit", True):
+        
+            cached = self._find_cached_pdf(jm_id)
+            if cached:
+                file_size_mb = os.path.getsize(cached) / (1024 * 1024)
+                yield event.plain_result(f"📦 缓存命中！直接发送...\n📦 {file_size_mb:.1f}MB")
+                async for _ in self._send_file(event, cached):
+                    yield _
+                yield event.plain_result(
+                    f"✅ 发送完成！\n"
+                    f" ID: {jm_id}\n"
+                    f"📦 {file_size_mb:.1f}MB（来自缓存）"
+                )
+                return
 
         # ---- 页数预检：超过上限直接拒绝，避免下载卡死 ----
         max_pages = self.config.get("max_pages", 100)

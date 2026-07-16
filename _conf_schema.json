@@ -67,6 +67,12 @@
         "default": true,
         "hint": "关闭后只发文字信息，防止被举办"
     },
+    "cache_hit": {
+        "description": "缓存命中是否直接发送PDF",
+        "type": "bool",
+        "default": true,
+        "hint": "关闭后不直接发送缓存PDF，而是重新下载并生成PDF"
+    },
     "max_pages": {
         "description": "本子页数上限，超过此页数将拒绝下载",
         "type": "int",
