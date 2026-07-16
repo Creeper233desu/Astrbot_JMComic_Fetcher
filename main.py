@@ -1,11 +1,4 @@
 """
-JMComic PDF下载插件
-
-功能：
-- /jmcomic <ID>  或  /jm <ID>  → 下载JM本子并导出为PDF发送到QQ
-- /jmstatus → 查看下载缓存状态
-- /jmclean → 清理所有下载缓存（仅管理员）
-
 依赖：
 - jmcomic >= 2.7.0
 - img2pdf
@@ -30,7 +23,10 @@ from astrbot.core import astrbot_config, file_token_service
 
 class JmcomicPlugin(Star):
     """
-    JMComic PDF下载插件
+  
+
+    
+      JMComic PDF下载插件
 
     通过QQ命令触发JM本子下载，自动导出为PDF并发送到当前会话。
     每次下载使用独立的工作目录，避免并发冲突。
@@ -63,6 +59,52 @@ class JmcomicPlugin(Star):
         logger.info(f"JMComic插件已初始化，缓存目录: {self.cache_root}")
 
     # ======================== 命令处理 ========================
+    @filter.command("jmver")
+    @filter.permission_type(PermissionType.ADMIN)
+    async def cmd_version(self, event: AstrMessageEvent):
+        """查看插件版本"""
+        if not self._check_access(event):
+            return
+        version = author = repo = "未知"
+        try:
+            # 从同目录的 metadata.yml 或 metadata.yaml 中获取版本号(Docker环境)
+            import yaml
+            metadata_file = Path(__file__).resolve().parent / "metadata.yml"
+            if not metadata_file.exists():
+                metadata_file = Path(__file__).resolve().parent / "metadata.yaml"
+            if metadata_file.exists():
+                with metadata_file.open("r", encoding="utf-8") as f:
+                    metadata = yaml.safe_load(f) or {}
+                version = metadata.get("version", version)
+                author = metadata.get("author", author)
+                repo = metadata.get("repo", repo)
+        except (ImportError, FileNotFoundError, OSError):
+            # 如果缺少 yaml 模块，尝试简单解析 metadata 文件
+            metadata_file = Path(__file__).resolve().parent / "metadata.yml"
+            if not metadata_file.exists():
+                metadata_file = Path(__file__).resolve().parent / "metadata.yaml"
+            if metadata_file.exists():
+                try:
+                    text = metadata_file.read_text("utf-8")
+                    for line in text.splitlines():
+                        if ":" not in line:
+                            continue
+                        key, value = line.split(":", 1)
+                        key = key.strip().lower()
+                        value = value.strip().strip('"\'')
+                        if key == "version":
+                            version = value or version
+                        elif key == "author":
+                            author = value or author
+                        elif key == "repo":
+                            repo = value or repo
+                except OSError:
+                    pass
+        yield event.plain_result(f"JMComic插件:\n"
+                                 f"版本: {version}\n"
+                                 f"作者: {author}\n"
+                                 f"仓库: {repo}")
+
     @filter.command("jminfo")
     @filter.permission_type(PermissionType.MEMBER)
     async def cmd_info(self, event: AstrMessageEvent):
@@ -120,6 +162,7 @@ class JmcomicPlugin(Star):
             "  /jmstatus                    缓存状态\n"
             "  /jmclean                     清理缓存(管理员)\n"
             "  /jmhelp                      显示此帮助\n\n"
+            "  /jmver                       查看插件信息\n"
             "排序: latest views pics likes"
         )
     

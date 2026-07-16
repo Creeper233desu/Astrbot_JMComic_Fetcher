@@ -6,7 +6,7 @@
         "hint": "QQ群文件限制通常为100MB，建议设为80MB以下以确保兼容性"
     },
     "download_threads": {
-        "description": "图片下载并发线程数（调低可减少内存占用）",
+        "description": "图片下载并发线程数",
         "type": "int",
         "default": 8,
         "hint": "默认8，内存不足时建议降低"
@@ -15,7 +15,7 @@
         "description": "下载超时时间(秒)，超过此时间将终止下载",
         "type": "int",
         "default": 300,
-        "hint": "防止下载卡死，建议设为180-600之间（3-10分钟）"
+        "hint": "防止下载卡死"
     },
     "send_mode": {
         "description": "文件发送方式",
